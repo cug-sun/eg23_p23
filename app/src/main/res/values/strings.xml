@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">War Game</string>
+    <string name="deployHint">Sélectionnez une zone pour le déploiement</string>
+</resources>
