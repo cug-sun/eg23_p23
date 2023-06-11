@@ -58,6 +58,9 @@ public class Soldier implements Serializable {
     @Override
     public String toString() {
         String name = this.rank.toString() + this.id;
+        if(this.reservist){
+            name += " (R)";
+        }
         return name;
     }
 

@@ -6,7 +6,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,33 +25,58 @@ public class MainActivity4 extends AppCompatActivity {
     private Deployment deployment1;
     private Deployment deployment2;
     private Spinner spinner;
-    private ActivityResultLauncher launcher;
+    private ActivityResultLauncher launcher5;
+    private ActivityResultLauncher launcher6;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main4);
 
-        launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        launcher5 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
-                if(result.getResultCode() == Activity.RESULT_OK){
-                    Log.d("Return", "Return from activity 5");
-                    Player player = (Player) result.getData().getSerializableExtra("player");
-                    Zone zone = (Zone) result.getData().getSerializableExtra("zone");
-                    switch (player.getId()){
-                        case 0:
-                            players.set(0, player);
-                            selectedPlayer = player;
-                            break;
-                        case 1:
-                            players.set(1, player);
-                            selectedPlayer = player;
-                            break;
-                        default:
-                            break;
+                if(result.getResultCode() == RESULT_OK){
+                    int from = result.getData().getIntExtra("from", -1);
+                    if (from == 5) {
+                        Log.d("Return", "Return from activity 5");
+                        Player player = (Player) result.getData().getSerializableExtra("player");
+                        Zone zone = (Zone) result.getData().getSerializableExtra("zone");
+                        switch (player.getId()){
+                            case 0:
+                                players.set(0, player);
+                                selectedPlayer = player;
+                                spinner.setSelection(0, true);
+                                break;
+                            case 1:
+                                players.set(1, player);
+                                selectedPlayer = player;
+                                spinner.setSelection(1, true);
+                                break;
+                            default:
+                                break;
+                        }
                     }
 
+                }
+            }
+        });
+
+        launcher6 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if(result.getResultCode() == RESULT_OK){
+                    Log.d("Return", "Return from activity 6");
+                    int from = result.getData().getIntExtra("from", -1);
+                    if (from == 6) {
+                        Log.d("Return", "Return from activity 6");
+                        Player player1 = (Player) result.getData().getSerializableExtra("player1");
+                        Player player2 = (Player) result.getData().getSerializableExtra("player2");
+                        players.set(0, player1);
+                        players.set(1, player2);
+                        selectedPlayer = player1;
+                        spinner.setSelection(0, true);
+                    }
                 }
             }
         });
@@ -71,8 +95,6 @@ public class MainActivity4 extends AppCompatActivity {
         Log.d("player1", player1.getName());
         //default selected player is 1
         selectedPlayer = player1;
-        //initialize game
-        Game game = new Game();
 
         spinner = (Spinner) findViewById(R.id.spinner2);
 
@@ -94,56 +116,67 @@ public class MainActivity4 extends AppCompatActivity {
     }
 
     public void onGymClick(View view){
-        Intent intent = new Intent(this,MainActivity5.class);
-        intent.putExtra("zone", Zone.gym);
-        intent.putExtra("player", selectedPlayer);
-//        startActivity(intent);
-        launcher.launch(intent);
+        if(isBattleFinished(Zone.gym)){
+            Intent intent = new Intent(this,MainActivity5.class);
+            intent.putExtra("zone", Zone.gym);
+            intent.putExtra("player", selectedPlayer);
+            launcher5.launch(intent);
+        }else {
+            Toast.makeText(this, "Le combat n’est pas fini ici", Toast.LENGTH_LONG).show();
+        }
+
 
     }
     public void onBdeClick(View view){
-        Intent intent = new Intent(this,MainActivity5.class);
-        intent.putExtra("zone", Zone.bde);
-        intent.putExtra("player", selectedPlayer);
-        //        startActivity(intent);
-        launcher.launch(intent);
-
+        if (isBattleFinished(Zone.bde)) {
+            Intent intent = new Intent(this, MainActivity5.class);
+            intent.putExtra("zone", Zone.bde);
+            intent.putExtra("player", selectedPlayer);
+            launcher5.launch(intent);
+        } else {
+            Toast.makeText(this, "Le combat n’est pas fini ici", Toast.LENGTH_LONG).show();
+        }
     }
     public void onLibraryClick(View view){
-        Intent intent = new Intent(this,MainActivity5.class);
-        intent.putExtra("zone", Zone.library);
-        intent.putExtra("player", selectedPlayer);
-        //        startActivity(intent);
-        launcher.launch(intent);
-
+        if(isBattleFinished(Zone.library)) {
+            Intent intent = new Intent(this, MainActivity5.class);
+            intent.putExtra("zone", Zone.library);
+            intent.putExtra("player", selectedPlayer);
+            launcher5.launch(intent);
+        }else {
+            Toast.makeText(this, "Le combat n’est pas fini ici", Toast.LENGTH_LONG).show();
+        }
     }
     public void onAdminClick(View view){
-        Intent intent = new Intent(this,MainActivity5.class);
-        intent.putExtra("zone", Zone.admin);
-        intent.putExtra("player", selectedPlayer);
-        //        startActivity(intent);
-        launcher.launch(intent);
-
+        if(isBattleFinished(Zone.admin)) {
+            Intent intent = new Intent(this, MainActivity5.class);
+            intent.putExtra("zone", Zone.admin);
+            intent.putExtra("player", selectedPlayer);
+            launcher5.launch(intent);
+        }else {
+            Toast.makeText(this, "Le combat n’est pas fini ici", Toast.LENGTH_LONG).show();
+        }
     }
     public void onIndustryClick(View view){
-        Intent intent = new Intent(this,MainActivity5.class);
-        intent.putExtra("zone", Zone.industry);
-        intent.putExtra("player", selectedPlayer);
-        //        startActivity(intent);
-        launcher.launch(intent);
-
+        if (isBattleFinished(Zone.industry)) {
+            Intent intent = new Intent(this, MainActivity5.class);
+            intent.putExtra("zone", Zone.industry);
+            intent.putExtra("player", selectedPlayer);
+            launcher5.launch(intent);
+        } else {
+            Toast.makeText(this, "Le combat n’est pas fini ici", Toast.LENGTH_LONG).show();
+        }
     }
 
     public void onBattleClick(View view){
-        presetDeployment();
-        if(players.get(0).getDeployment().getDeployedZones() == 5 && players.get(1).getDeployment().getDeployedZones() == 5){
+//        presetDeployment();
+        if(players.get(0).getDeployment().isAllDeployed() && players.get(1).getDeployment().isAllDeployed()){
             //go to battle
-//            Toast.makeText(this,"你选择的是:",Toast.LENGTH_SHORT).show();
             Log.d("soldier in gym", String.valueOf(players.get(0).getDeployment().getSoldiersByArea(Zone.gym).size()));
             Intent intent = new Intent(this, MainActivity6.class);
             intent.putExtra("player1", players.get(0));
             intent.putExtra("player2", players.get(1));
-            startActivity(intent);
+            launcher6.launch(intent);
         }
         else{
             //alert
@@ -158,11 +191,17 @@ public class MainActivity4 extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-//        selectedPlayer = players.get(0);
-        Log.d("resume", "Resume");
+    public boolean isBattleFinished(Zone zone){
+        if(Game.round == 0){
+            return true;
+        }else {
+            if(players.get(0).getOccupation().contains(zone) || players.get(1).getOccupation().contains(zone)){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
     }
 
     //TODO preset the deployment, only use for debug

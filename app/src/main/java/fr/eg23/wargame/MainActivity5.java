@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ public class MainActivity5 extends AppCompatActivity {
     private RecyclerView unDeployedView;
     private List<Soldier> deployedSoldiers;
     private List<Soldier> unDeployedSoldiers;
+    private TextView hint;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +43,15 @@ public class MainActivity5 extends AppCompatActivity {
         imageview = findViewById(R.id.zone);
         deployedView = findViewById(R.id.deployList);
         unDeployedView = findViewById(R.id.soldierList);
+        hint = findViewById(R.id.textView32);
 
+        if(Game.round == 0){
+            hint.setText("Les réservistes ne peuvent pas être déployés maintenant");
+        }else{
+            hint.setText("Vous pouvez désormais déployer des réservistes");
+        }
 
+        Log.d("current round", String.valueOf(Game.round));
         unDeployedSoldiers = getDeployableSoldiers(player);
         unDeployedAdapter = new DeployAdapter(unDeployedSoldiers);
         unDeployedView.setAdapter(unDeployedAdapter);
@@ -101,7 +111,6 @@ public class MainActivity5 extends AppCompatActivity {
 
             }
         });
-        int a = Game.round;
     }
 
     public List<Soldier> sortSoldierList(List<Soldier> soldiers){
@@ -113,21 +122,6 @@ public class MainActivity5 extends AppCompatActivity {
     public List<Soldier> getDeployableSoldiers(Player player){
         List<Soldier> soldiers = new ArrayList<>();
         if(Game.round == 0){
-//            for(Soldier soldier: player.getPrivates()){
-//                if(!soldier.isReservist()){
-//                    soldiers.add(soldier);
-//                }
-//            }
-//            for(Soldier soldier: player.getElites()){
-//                if(!soldier.isReservist()){
-//                    soldiers.add(soldier);
-//                }
-//            }
-//            for(Soldier soldier: player.getMaitres()){
-//                if(!soldier.isReservist()){
-//                    soldiers.add(soldier);
-//                }
-//            }
             for(Soldier soldier : player.getAllSoldiers()){
                 if(!soldier.isReservist()){
                     soldiers.add(soldier);
@@ -136,15 +130,20 @@ public class MainActivity5 extends AppCompatActivity {
         }
         else{
             soldiers = player.getAllSoldiers();
+            Log.d("getDeployableSoldiers", "getAllSoldiers");
         }
         return soldiers;
     }
 
     public void onFinishClick(View view){
+        if(player.getOccupation().contains(zone) && deployedSoldiers.size() == 0){
+            Toast.makeText(this, "Au moins 1 soldat doit rester sur cette zone", Toast.LENGTH_SHORT).show();
+            return;
+        }
         player.getDeployment().addSoldier(zone, deployedSoldiers);
-        player.setAllSoldiers(unDeployedSoldiers);
+        int from = 5;
         Intent intent = new Intent();
-//        intent.putExtra("deployment", (Serializable) deployedSoldiers);
+        intent.putExtra("from", from);
         intent.putExtra("player", player);
         intent.putExtra("zone", zone);
         setResult(RESULT_OK, intent);

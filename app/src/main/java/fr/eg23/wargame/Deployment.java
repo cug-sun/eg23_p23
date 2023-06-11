@@ -38,7 +38,21 @@ public class Deployment implements Serializable {
         return deploymentMap.size();
     }
 
-    public int getDeployedNum(){
-        return deploymentMap.size();
+    public int getDeployedNumByArea(Zone zone){
+        return deploymentMap.getOrDefault(zone, new ArrayList<>()).size();
+    }
+    public void clearZone(Zone zone){
+        deploymentMap.remove(zone);
+    }
+    public boolean isAllDeployed(){
+        if (deploymentMap.size() != 5){
+            return false;
+        }
+        for(List<Soldier> soldiers : deploymentMap.values()){
+            if (soldiers.size() == 0){
+                return false;
+            }
+        }
+        return true;
     }
 }
